@@ -6,6 +6,7 @@
 
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '~/utils/ApiError'
 
 const createNew = async (req, res, next) => {
 /**
@@ -29,6 +30,7 @@ const createNew = async (req, res, next) => {
       'string.trim': 'Title must not have leading or trailing whitespace (ThuongNVa)'
     }),
     description: Joi.string().required().min(3).max(255).trim().strict().messages({
+      'string.empty': 'Description is not allowed to be empty (ThuongNVa)',
       'string.min': 'Description length must be at least 3 characters long (ThuongNVa)',
       'string.max': 'Description length must be less than or equal to 255 characters long (ThuongNVa)',
       'string.trim': 'Description must not have leading or trailing whitespace (ThuongNVa)'
@@ -44,9 +46,17 @@ const createNew = async (req, res, next) => {
     // Validate dữ liệu xong, hợp lệ thì cho request đi tiếp sang Controller
     next()
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      errors: new Error(error).message
-    })
+    // 2 cách sau dùng cách nào cũng được
+    // const errorMessage = new Error(error).message
+    // const customError = new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
+    // next(customError)
+
+    // cách này tiện vì ngắn (lười), cách trên dài dòng nhưng dễ hiểu
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+
+    // res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+    //   errors: new Error(error).message
+    // })
   }
 }
 
