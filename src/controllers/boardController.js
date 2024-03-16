@@ -5,26 +5,29 @@
  */
 
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '~/utils/ApiError'
 
 const createNew = async (req, res, next) => {
   try {
-    console.log('req.body: ', req.body)
-    console.log('req.query: ', req.query)
-    console.log('req.params: ', req.params)
-    console.log('req.files: ', req.files)
-    console.log('req.cookies: ', req.cookies)
-    console.log('req.jwtDecoded', req.jwtDecoded)
+    // console.log('req.body: ', req.body)
+    // console.log('req.query: ', req.query)
+    // console.log('req.params: ', req.params)
+    // console.log('req.files: ', req.files)
+    // console.log('req.cookies: ', req.cookies)
+    // console.log('req.jwtDecoded', req.jwtDecoded)
 
     // Điều hướng dữ liệu sang tầng Service
 
+    // sinh lỗi để xử lý tầng middleware
+    // throw new ApiError(StatusCodes.BAD_GATEWAY, 'This is test error')
     // Có kết quả thì trả về phía Client
     res.status(StatusCodes.CREATED).json({
       message: 'POST from Controller: API Create new boards'
     })
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      errors: error.message
-    })
+    // khi gọi next(error) hay ở những chỗ ta muốn trả ra lỗi ở những chỗ xử lý
+    // logic thì ExpressJS sẽ đưa về những chỗ xử lý lỗi tập trung (Middleware)
+    next(error)
   }
 }
 
