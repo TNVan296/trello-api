@@ -29,12 +29,7 @@ const createNew = async (req, res, next) => {
       // khi người dùng vô tình nhập phải khoảng trống thì sẽ bỏ qua và nhận luôn cả khoảng trống
       'string.trim': 'Title must not have leading or trailing whitespace (ThuongNVa)'
     }),
-    description: Joi.string().required().min(3).max(255).trim().strict().messages({
-      'string.empty': 'Description is not allowed to be empty (ThuongNVa)',
-      'string.min': 'Description length must be at least 3 characters long (ThuongNVa)',
-      'string.max': 'Description length must be less than or equal to 255 characters long (ThuongNVa)',
-      'string.trim': 'Description must not have leading or trailing whitespace (ThuongNVa)'
-    })
+    description: Joi.string().required().min(3).max(255).trim().strict()
   })
 
   try {
