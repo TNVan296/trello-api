@@ -30,16 +30,23 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   _destroy: Joi.boolean().default(false)
 })
 
+// Validation dữ liệu trước khi khởi tạo API
+const validateBeforeCreate = async (data) => {
+  return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
+}
+
 // Thao tác đến Database thì hầu như xử lý bất đồng bộ nhiều (async, await)
 const createNew = async (data) => {
   try {
+    const validData = await validateBeforeCreate(data)
+
     // dùng 2 cách nào cũng được nha !!!
     // Cách này tuy dài nhưng dễ hiểu
     // const createdBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
     // return createdBoard
 
     // cách này ngắn gọn hơn (do lười nên vậy =)) )
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
   } catch (error) { throw new Error(error) }
 }
 
