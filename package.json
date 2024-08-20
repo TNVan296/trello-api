@@ -1,9 +1,9 @@
 {
-  "name": "nodejs-expressjs-mongodb-base-project",
+  "name": "trello-api",
   "private": true,
   "version": "1.0.0",
   "author": "ThuongNVa",
-  "description": "Self-learn BE",
+  "description": "Self-learn BE (NodeJS ExpressJS MongoDB)",
   "engines": {
     "node": "18.16.0"
   },
