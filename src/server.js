@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 import express from 'express'
 import exitHook from 'async-exit-hook'
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb'
@@ -24,7 +23,7 @@ const START_SERVER = () => {
     console.log(`3. Hello ${env.AUTHOR}, Back-End Server is running successfully at http://${ env.APP_HOST }:${ env.APP_PORT }/`)
   })
 
-  // Thực hiện các tác vụ Cleanup trước khi dùng Server
+  // Thực hiện các tác vụ Cleanup trước khi dừng Server
   exitHook(() => {
     console.log('4. Server is shutting down ...')
     CLOSE_DB()
@@ -46,13 +45,3 @@ const START_SERVER = () => {
     process.exit(0)
   }
 })()
-
-// // chỉ khi kết nối tới Database thành công thì Start Server Back-End lên.
-// console.log('1. Connecting to MongoDB Cloud Atlas ...')
-// CONNECT_DB()
-//   .then(() => console.log('2. Connected to MongoDB Cloud Atlas !'))
-//   .then(() => START_SERVER())
-//   .catch(error => {
-//     console.error(error)
-//     process.exit(0)
-//   })

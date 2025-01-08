@@ -1,10 +1,5 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
 import Joi from 'joi'
+import { ObjectId } from 'mongodb'
 // Bắt đầu tương tác bất đồng bộ với Database r nên phải import ra nha !!!
 import { GET_DB } from '~/config/mongodb'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
@@ -39,27 +34,22 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
   try {
     const validData = await validateBeforeCreate(data)
-
-    // dùng 2 cách nào cũng được nha !!!
-    // Cách này tuy dài nhưng dễ hiểu
-    // const createdBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
-    // return createdBoard
-
-    // cách này ngắn gọn hơn (do lười nên vậy =)) )
     return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
   } catch (error) { throw new Error(error) }
 }
 
 const findOneById = async (id) => {
   try {
-    // 2 cách nào cũng được
-    // const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
-    //   _id: id
-    // })
-    // return result
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+  } catch (error) { throw new Error(error) }
+}
 
-    // cách này do ngắn gọn (lười đó =)) )
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: id })
+// Query tổng hợp (aggrerate) để lấy toàn bộ Columns và Cards thuộc Board
+const getDetails = async (id) => {
+  try {
+    // tạm thời để giống findOneById (vì tương tự nhau)
+    // update phần aggrerate sau
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
   } catch (error) { throw new Error(error) }
 }
 
@@ -67,5 +57,6 @@ export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
-  findOneById
+  findOneById,
+  getDetails
 }
