@@ -1,9 +1,3 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
@@ -33,25 +27,13 @@ const createNew = async (req, res, next) => {
   })
 
   try {
-    // console.log(req.body)
-
     // abortEarly: false
     // khi true dừng validation ở lỗi đầu tiên, nếu false sẽ trả toàn bộ lỗi được tìm thấy
     await correctCondition.validateAsync(req.body, { abortEarly: false })
     // Validate dữ liệu xong, hợp lệ thì cho request đi tiếp sang Controller
     next()
   } catch (error) {
-    // 2 cách sau dùng cách nào cũng được
-    // const errorMessage = new Error(error).message
-    // const customError = new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
-    // next(customError)
-
-    // cách này tiện vì ngắn (lười), cách trên dài dòng nhưng dễ hiểu
     next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
-
-    // res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-    //   errors: new Error(error).message
-    // })
   }
 }
 

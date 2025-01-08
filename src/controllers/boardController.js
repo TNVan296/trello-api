@@ -1,9 +1,3 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
 import { StatusCodes } from 'http-status-codes'
 import { boardService } from '~/services/boardService'
 // import ApiError from '~/utils/ApiError'
@@ -23,7 +17,6 @@ const createNew = async (req, res, next) => {
     // sinh lỗi để xử lý tầng middleware
     // throw new ApiError(StatusCodes.BAD_GATEWAY, 'This is test error')
 
-    // Có kết quả thì trả về phía Client
     res.status(StatusCodes.CREATED).json(createBoard)
   } catch (error) {
     // khi gọi next(error) hay ở những chỗ ta muốn trả ra lỗi ở những chỗ xử lý
@@ -32,6 +25,18 @@ const createNew = async (req, res, next) => {
   }
 }
 
+const getDetails = async (req, res, next) => {
+  try {
+    // console.log('req.params: ', req.params)
+    const boardId = req.params.boardId
+    const board = await boardService.getDetails(boardId)
+    res.status(StatusCodes.CREATED).json(board)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const boardController = {
-  createNew
+  createNew,
+  getDetails
 }
