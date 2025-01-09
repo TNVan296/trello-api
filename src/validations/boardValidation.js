@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
+import { BOARD_TYPES } from '~/utils/constants'
 
 const createNew = async (req, res, next) => {
 /**
@@ -23,7 +24,8 @@ const createNew = async (req, res, next) => {
       // khi người dùng vô tình nhập phải khoảng trống thì sẽ bỏ qua và nhận luôn cả khoảng trống
       'string.trim': 'Title must not have leading or trailing whitespace (ThuongNVa)'
     }),
-    description: Joi.string().required().min(3).max(255).trim().strict()
+    description: Joi.string().required().min(3).max(255).trim().strict(),
+    type: Joi.string().valid(BOARD_TYPES.PRIVATE, BOARD_TYPES.PUBLIC).required()
   })
 
   try {
