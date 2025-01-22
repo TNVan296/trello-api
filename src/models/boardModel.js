@@ -1,16 +1,14 @@
 import Joi from 'joi'
-import { ObjectId } from 'mongodb'
+import { ObjectId, ReturnDocument } from 'mongodb'
 import { GET_DB } from '~/config/mongodb'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { BOARD_TYPES } from '~/utils/constants'
-// import { columnModel } from '~/models/columnModel.js'
-// import { cardModel } from '~/models/cardModel.js'
+import { columnModel } from '~/models/columnModel.js'
+import { cardModel } from '~/models/cardModel.js'
 
 // Define Collection (Name & Schema)
 // COLLECTION = Table (SQL)
 const BOARD_COLLECTION_NAME = 'boards'
-const COLUMN_COLLECTION_NAME = 'columns'
-const CARD_COLLECTION_NAME = 'cards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
   title: Joi.string().required().min(3).max(50).trim().strict(),
   slug: Joi.string().required().min(3).trim().strict(),
@@ -57,13 +55,13 @@ const getDetails = async (id) => {
         _destroy: false
       } },
       { $lookup: {
-        from: COLUMN_COLLECTION_NAME,
+        from: columnModel.COLUMN_COLLECTION_NAME,
         localField: '_id',
         foreignField: 'boardId',
         as: 'columns'
       } },
       { $lookup: {
-        from: CARD_COLLECTION_NAME,
+        from: cardModel.CARD_COLLECTION_NAME,
         localField: '_id',
         foreignField: 'boardId',
         as: 'cards'
@@ -73,10 +71,23 @@ const getDetails = async (id) => {
   } catch (error) { throw new Error(error) }
 }
 
+// Push 1 giá trị columnId vào cuối mảng columnOrderIds
+const pushColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $push: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+    return result.value
+  } catch (error) { throw new Error(error) }
+}
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
-  getDetails
+  getDetails,
+  pushColumnOrderIds
 }
