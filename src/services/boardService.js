@@ -5,7 +5,6 @@ import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
 
 const createNew = async (reqBody) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     // Xử lý logic dữ liệu tùy đặc thù của dự án
     const newBoard = {
@@ -26,7 +25,6 @@ const createNew = async (reqBody) => {
 }
 
 const getDetails = async (boardId) => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const board = await boardModel.getDetails(boardId)
     if (!board) {
