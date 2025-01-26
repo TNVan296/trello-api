@@ -39,6 +39,27 @@ const createNew = async (req, res, next) => {
   }
 }
 
+const update = async (req, res, next) => {
+  const correctCondition = Joi.object({
+    title: Joi.string().min(3).max(50).trim().strict().messages(),
+    description: Joi.string().min(3).max(255).trim().strict(),
+    type: Joi.string().valid(BOARD_TYPES.PRIVATE, BOARD_TYPES.PUBLIC)
+  })
+
+  try {
+    // với trường hợp update thì cho phép Unknown để không cần đẩy một số field lên
+    await correctCondition.validateAsync(req.body, {
+      abortEarly: false,
+      allowUnknown: true
+    })
+
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+  }
+}
+
 export const boardValidation = {
-  createNew
+  createNew,
+  update
 }
