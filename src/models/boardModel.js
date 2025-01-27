@@ -90,6 +90,12 @@ const pushColumnOrderIds = async (column) => {
 const update = async (boardId, updateData) => {
   try {
     Object.keys(updateData).forEach(key => INVALID_UPDATE_FIELDS.includes(key) && delete updateData[key])
+
+    // Đổi với những dữ liệu liên quan tới ObjectId, ta biến đổi ở đây
+    if (updateData.columnOrderIds) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map(_id => (new ObjectId(_id)))
+    }
+
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(boardId) },
       { $set: updateData },
