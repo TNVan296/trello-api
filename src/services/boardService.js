@@ -1,5 +1,7 @@
 import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
+import { columnModel } from '~/models/columnModel'
+import { cardModel } from '~/models/cardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
@@ -61,8 +63,29 @@ const update = async (boardId, reqBody) => {
   } catch (error) { throw error }
 }
 
+const moveCardToDifferentColumn = async (reqBody) => {
+  try {
+  // B1: Cập nhật mảng cardOrderIds của column ban đầu chứa nó (xóa cái _id của card ra khỏi mảng)
+    await columnModel.update(reqBody.prevColumnId, {
+      cardOrderIds:reqBody.prevCardOrderIds,
+      updateAt: Date.now()
+    })
+    // B2: Cập nhật mảng cardOrderIds của column tiếp theo (thêm cái _id của card vào mảng)
+    await columnModel.update(reqBody.nextColumnId, {
+      cardOrderIds:reqBody.nextCardOrderIds,
+      updateAt: Date.now()
+    })
+    // B3: Cập nhật trường columnId mới của cái card ta đã kéo
+    await cardModel.update(reqBody.currentCardId, {
+      columnId: reqBody.nextColumnId
+    })
+    return { updateResult: 'Successfully !' }
+  } catch (error) { throw error }
+}
+
 export const boardService = {
   createNew,
   getDetails,
-  update
+  update,
+  moveCardToDifferentColumn
 }
